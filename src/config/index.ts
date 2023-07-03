@@ -1,5 +1,6 @@
-require('dotenv').config();
+import { config } from 'dotenv';
 
+config();
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 export default {
