@@ -8,7 +8,7 @@ export const handleGetBooks = async (): Promise<unknown[]> => {
 
 export const handleGetBookById = async (id: string): Promise<unknown> => {
   const collection = (await database()).collection('books');
-  return await collection.findOne({ id: id }, { projection: { _id: 0 } });
+  return await collection.findOne({ uid: id }, { projection: { _id: 0 } });
 };
 
 export const handleCreateBook = async (
@@ -23,31 +23,31 @@ export const handleCreateBook = async (
     throw new Error('Book already exists');
   }
   const bookId = shortid.generate();
-  await collection.insertOne({ id: bookId, name, author, price, description });
-  return { id: bookId, name, author, price, description };
+  await collection.insertOne({ uid: bookId, name, author, price, description });
+  return { uid: bookId, name, author, price, description };
 };
 
 export const handleUpdateBook = async (
-  id: string,
+  uid: string,
   name: string,
   author: string,
   price: string,
   description: string,
 ): Promise<unknown> => {
   const collection = (await database()).collection('books');
-  const exist = await collection.findOne({ id });
+  const exist = await collection.findOne({ uid });
   if (!exist) {
     throw new Error('Book not found');
   }
-  await collection.updateOne({ id }, { $set: { name, author, price, description } });
-  return { id, name, author, price, description };
+  await collection.updateOne({ uid }, { $set: { name, author, price, description } });
+  return { uid, name, author, price, description };
 };
 
-export const handleDeleteBook = async (id: string): Promise<void> => {
+export const handleDeleteBook = async (uid: string): Promise<void> => {
   const collection = (await database()).collection('books');
-  const exist = await collection.findOne({ id });
+  const exist = await collection.findOne({ uid });
   if (!exist) {
     throw new Error('Book not found');
   }
-  await collection.deleteOne({ id });
+  await collection.deleteOne({ uid });
 };

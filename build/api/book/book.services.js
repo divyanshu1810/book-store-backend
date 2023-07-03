@@ -13,7 +13,7 @@ const handleGetBooks = async () => {
 exports.handleGetBooks = handleGetBooks;
 const handleGetBookById = async (id) => {
     const collection = (await (0, database_1.default)()).collection('books');
-    return await collection.findOne({ id: id }, { projection: { _id: 0 } });
+    return await collection.findOne({ uid: id }, { projection: { _id: 0 } });
 };
 exports.handleGetBookById = handleGetBookById;
 const handleCreateBook = async (name, author, price, description) => {
@@ -23,27 +23,27 @@ const handleCreateBook = async (name, author, price, description) => {
         throw new Error('Book already exists');
     }
     const bookId = shortid_1.default.generate();
-    await collection.insertOne({ id: bookId, name, author, price, description });
-    return { id: bookId, name, author, price, description };
+    await collection.insertOne({ uid: bookId, name, author, price, description });
+    return { uid: bookId, name, author, price, description };
 };
 exports.handleCreateBook = handleCreateBook;
-const handleUpdateBook = async (id, name, author, price, description) => {
+const handleUpdateBook = async (uid, name, author, price, description) => {
     const collection = (await (0, database_1.default)()).collection('books');
-    const exist = await collection.findOne({ id });
+    const exist = await collection.findOne({ uid });
     if (!exist) {
         throw new Error('Book not found');
     }
-    await collection.updateOne({ id }, { $set: { name, author, price, description } });
-    return { id, name, author, price, description };
+    await collection.updateOne({ uid }, { $set: { name, author, price, description } });
+    return { uid, name, author, price, description };
 };
 exports.handleUpdateBook = handleUpdateBook;
-const handleDeleteBook = async (id) => {
+const handleDeleteBook = async (uid) => {
     const collection = (await (0, database_1.default)()).collection('books');
-    const exist = await collection.findOne({ id });
+    const exist = await collection.findOne({ uid });
     if (!exist) {
         throw new Error('Book not found');
     }
-    await collection.deleteOne({ id });
+    await collection.deleteOne({ uid });
 };
 exports.handleDeleteBook = handleDeleteBook;
 //# sourceMappingURL=book.services.js.map
