@@ -10,7 +10,7 @@ import {
 export const getBooks = async (req: Request, res: Response): Promise<void> => {
   try {
     const { page = 1, limit = 2, sort = 'price' } = req.query;
-    const books = await handleGetBooks(page, limit, sort);
+    const books = await handleGetBooks(page, limit, sort, res.locals.user.email);
     res.status(200).json({
       success: 'true',
       message: 'Books retrieved successfully',
@@ -24,7 +24,7 @@ export const getBooks = async (req: Request, res: Response): Promise<void> => {
 
 export const getBookById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const book = await handleGetBookById(req.params.id);
+    const book = await handleGetBookById(req.params.id, res.locals.user.email);
     if (!book) {
       res.status(404).json({
         success: 'false',
@@ -44,14 +44,20 @@ export const getBookById = async (req: Request, res: Response): Promise<void> =>
 
 export const createBook = async (req: Request, res: Response): Promise<void> => {
   try {
-    const book = await handleCreateBook(req.body.name, req.body.author, req.body.price, req.body.description);
+    const book = await handleCreateBook(
+      req.body.name,
+      req.body.author,
+      req.body.price,
+      req.body.description,
+      res.locals.user.email,
+    );
     res.status(200).json({
       success: 'true',
       message: 'Book created successfully',
       data: book,
     });
   } catch (error) {
-    if (error.message === 'Book already exist with same name and author') {
+    if (error === 'Book already exist with same name and author') {
       res.status(409).json({ success: 'false', error: error.message });
     }
     res.status(500).json({ success: 'false', error: error.message });
@@ -66,6 +72,7 @@ export const updateBook = async (req: Request, res: Response): Promise<void> => 
       req.body.author,
       req.body.price,
       req.body.description,
+      res.locals.user.email,
     );
     res.status(200).json({
       success: 'true',
@@ -73,7 +80,7 @@ export const updateBook = async (req: Request, res: Response): Promise<void> => 
       data: book,
     });
   } catch (error) {
-    if (error.message === 'Book not found') {
+    if (error === 'Book not found') {
       res.status(404).json({ success: 'false', error: error.message });
     }
     res.status(500).json({ success: 'false', error: error.message });
@@ -82,13 +89,13 @@ export const updateBook = async (req: Request, res: Response): Promise<void> => 
 
 export const deleteBook = async (req: Request, res: Response): Promise<void> => {
   try {
-    await handleDeleteBook(req.params.id);
+    await handleDeleteBook(req.params.id, res.locals.user.email);
     res.status(200).json({
       success: 'true',
       message: 'Book deleted successfully',
     });
   } catch (error) {
-    if (error.message === 'Book not found') {
+    if (error === 'Book not found') {
       res.status(404).json({ success: 'false', error: error.message });
     }
     res.status(500).json({ success: 'false', error: error.message });

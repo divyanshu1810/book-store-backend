@@ -15,6 +15,7 @@ export default function authenticateToken() {
       if (!data) {
         throw { statusCode: 404, message: 'User Not Found' };
       }
+      // req.headers.authorization = data;
       res.locals.user = data;
       next();
     } catch (error) {
