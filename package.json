@@ -32,5 +32,5 @@
     "zod": "^3.21.4"
   },
   "author": "divyanshu",
-  "license": ""
+  "license": "MIT"
 }
