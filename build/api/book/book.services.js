@@ -6,9 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleDeleteBook = exports.handleUpdateBook = exports.handleCreateBook = exports.handleGetBookById = exports.handleGetBooks = void 0;
 const database_1 = __importDefault(require("../../loaders/database"));
 const shortid_1 = __importDefault(require("shortid"));
-const handleGetBooks = async () => {
+const handleGetBooks = async (page, limit, sort) => {
+    const skipCount = (parseInt(page) - 1) * parseInt(limit);
+    const options = {
+        skip: skipCount,
+        limit: parseInt(limit),
+        sort: { [sort]: 1 },
+        projection: { _id: 0 },
+    };
     const collection = (await (0, database_1.default)()).collection('books');
-    return await collection.find({}, { projection: { _id: 0 } }).toArray();
+    return await collection.find({}, options).toArray();
 };
 exports.handleGetBooks = handleGetBooks;
 const handleGetBookById = async (id) => {
@@ -20,7 +27,7 @@ const handleCreateBook = async (name, author, price, description) => {
     const collection = (await (0, database_1.default)()).collection('books');
     const exist = await collection.findOne({ name, author });
     if (exist) {
-        throw new Error('Book already exists');
+        throw new Error('Book already exist with same name and author');
     }
     const bookId = shortid_1.default.generate();
     await collection.insertOne({ uid: bookId, name, author, price, description });

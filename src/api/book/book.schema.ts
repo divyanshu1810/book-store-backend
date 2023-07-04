@@ -1,11 +1,8 @@
 import { z } from 'zod';
 
 export const bookSchema = z.object({
-  name: z.string(),
-  author: z.string(),
-  price: z.number().positive(),
-  quantity: z.number().positive(),
-  description: z.string(),
-  category: z.string(),
-  rating: z.number().positive(),
+  name: z.string().min(10),
+  author: z.string().min(10),
+  price: z.number().positive().gte(5),
+  description: z.string().min(30),
 });
